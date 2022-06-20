@@ -9,7 +9,7 @@ class ClientAdmin(admin.ModelAdmin):
 
     list_display = ('client_number', 'first_name', 'middle_name', 'last_name', 'age', 'gender',)
     list_filter = ('client_number', 'funding_account',)
-    search_fields = ('client_number',)
+    search_fields = ('client_number', 'last_name', 'first_name')
 
 
 @admin.register(FundingAccount)
@@ -27,4 +27,4 @@ class ClientFundingAdmin(admin.ModelAdmin):
 
     list_display = ('client', 'fundingaccount', 'valid_from', 'valid_to', 'discount',)
     list_filter = ('client', 'fundingaccount',)
-    search_fields = ('funding_account', 'client',)
+    search_fields = ('fundingaccount', 'client',)

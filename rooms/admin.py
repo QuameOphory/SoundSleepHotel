@@ -7,7 +7,7 @@ from .models import Room, RoomType
 class RoomsAdmin(admin.ModelAdmin):
     '''Admin View for Rooms'''
 
-    list_display = ('room_number', 'room_type', 'room_status', 'room_totalbeds', 'room_totalbaths')
+    list_display = ('room_number', 'room_type', 'room_status', 'room_totalbeds', 'room_totalbaths', 'is_occupied')
     list_filter = ('room_number', 'room_type')
     search_fields = ('room_number',)
 

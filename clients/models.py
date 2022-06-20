@@ -46,6 +46,11 @@ class Client(models.Model):
     def get_absolute_url(self):
         return reverse("Client_detail", kwargs={"pk": self.pk})
 
+    def get_fullname(self):
+        if self.middle_name != '-':
+            return f'{self.first_name + " " + self.middle_name + " " + self.last_name}'
+        return f'{self.first_name + " " + self.last_name}'
+
 
 class FundingAccount(models.Model):
     """Model definition for FundingAccount."""
@@ -92,10 +97,11 @@ class ClientFunding(models.Model):
 
         verbose_name = 'Client Funding'
         verbose_name_plural = 'Client Fundings'
+        ordering = ('client',)
 
     def __str__(self):
         """Unicode representation of ClientFunding."""
-        return f'{self.client}, {self.fundingaccount}'
+        return f'{str(self.client) + " ---> [" + str(self.fundingaccount) + "]"}' 
 
 def clients_post_save(sender, instance, created, *args, **kwargs):
     if created:

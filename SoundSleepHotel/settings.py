@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'rooms.apps.RoomsConfig',
     'clients.apps.ClientsConfig',
+    'reservations.apps.ReservationsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

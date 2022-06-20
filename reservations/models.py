@@ -1,11 +1,11 @@
-from turtle import update
+from django.db.models.signals import post_save, m2m_changed
 from django.db import models
 from django.urls import reverse
-from pytz import timezone
+from django.utils import timezone
 import numberGenerator
 from django.utils.translation import gettext_lazy as _
-from clients.models import Client
-from rooms.models import RoomType
+from clients.models import Client, ClientFunding
+from rooms.models import RoomType, Room
 import field_validations
 
 # Create your models here.
@@ -17,15 +17,23 @@ def generateBookingNumber():
 
 class Booking(models.Model):
 
+    STATUS_CHOICES = [
+        ('checkin', 'Checked In'),
+        ('checkout', 'Checked Out'),
+        ('unattended', 'Unattended'),
+        ('cancel', 'Cancel'),
+    ]
+
     booking_number = models.CharField(_("Booking Number"), max_length=50, default=generateBookingNumber)
     booking_client = models.ForeignKey(Client, verbose_name=_("Booking By"), on_delete=models.CASCADE)
-    booking_from = models.DateTimeField(_("Booking From"), default=timezone.now, validators=[field_validations.validate_bookingfrom])
+    booking_from = models.DateTimeField(_("Booking From"), validators=[field_validations.validate_bookingfrom], default=timezone.now)
     booking_to = models.DateTimeField(_("Booking To"),)
     booking_roomtype = models.ForeignKey(RoomType, verbose_name=_("Room Type"), on_delete=models.CASCADE)
     booking_roomnumber = models.PositiveIntegerField(_("Number of Rooms"), default=1)
     is_active = models.BooleanField(_("Active"), default=True)
     created_at = models.DateTimeField(_("Created At"), auto_now_add=True)
     updated_at = models.DateTimeField(_("Updated At"), auto_now=True)
+    booking_status = models.CharField(_("Status"), max_length=20, default='unattended')
 
 
     class Meta:
@@ -33,7 +41,7 @@ class Booking(models.Model):
         verbose_name_plural = _("Bookings")
 
     def __str__(self):
-        return self.booking_number
+        return self.booking_client.get_fullname()
 
     def get_absolute_url(self):
         return reverse("booking_detail", kwargs={"pk": self.pk})
@@ -41,21 +49,37 @@ class Booking(models.Model):
 
 class CheckIn(models.Model):
 
-    STATUS_CHOICES = [
-        ('checkin', 'Checked In'),
-        ('checkout', 'Checked Out'),
-        ('unattended', 'Unattended'),
+    
+    CHECKIN_KIND_CHOICES = [
+        ('hd', 'Half Day'),
+        ('re', 'Regular Check-in'),
     ]
-
-    checkin_booking = models.ForeignKey(Booking, verbose_name=_("Booking"), on_delete=models.CASCADE)
-    booking_status = models.CharField(_("Status"), max_length=20)
+    funding_id = models.ForeignKey(ClientFunding, verbose_name=_("Funding Account"), on_delete=models.CASCADE)
+    checkin_booking = models.OneToOneField(Booking, verbose_name=_("Booking"), on_delete=models.CASCADE)
+    checkin_time = models.DateTimeField(_("Check-in At"), default=timezone.now)
+    checkin_type = models.CharField(_("Check-in Type"), max_length=4, choices=CHECKIN_KIND_CHOICES, default='re')
+    early_checkin = models.BooleanField(_("Early Check-in"), default=False)
+    rooms = models.ManyToManyField(Room, verbose_name=_("Rooms"))
 
     class Meta:
-        verbose_name = _("CheckIn")
-        verbose_name_plural = _("CheckIns")
+        verbose_name = _("Check In")
+        verbose_name_plural = _("Check Ins")
 
     def __str__(self):
-        return self.name
+        return f'{self.checkin_booking}'
 
     def get_absolute_url(self):
         return reverse("checkin_detail", kwargs={"pk": self.pk})
+
+    @property
+    def get_booking_number(self):
+        return str(self.checkin_booking.booking_number)
+
+
+def rooms_changed(sender, pk_set, **kwargs):
+    for i in pk_set:
+        room = Room.objects.get(pk=i)
+        room.is_occupied = True
+        room.save()
+
+m2m_changed.connect(rooms_changed, sender=CheckIn.rooms.through)
