@@ -19,7 +19,7 @@ class RoomTypeCreationForm(forms.ModelForm):
     
     class Meta:
         model = RoomType
-        fields = ("roomtype_code", "roomtype_name", "roomtype_rate", "roomtype_extrainfo",)
+        fields = ("roomtype_code", "roomtype_name", "roomtype_number", "roomtype_rate", "roomtype_extrainfo",)
 
 
 class RoomTypeUpdateForm(forms.ModelForm):

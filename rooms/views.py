@@ -62,7 +62,7 @@ class AllRoomTypeListView(generic.ListView):
 class RoomTypeDeleteView(generic.DeleteView):
     model = RoomType
     context_object_name = 'roomtype'
-    success_url = reverse_lazy('roomtype_list')
+    success_url = reverse_lazy('roomtype_list5/')
     
 
 class RoomTypeDetailView(generic.DetailView):

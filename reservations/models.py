@@ -46,6 +46,18 @@ class Booking(models.Model):
     def get_absolute_url(self):
         return reverse("booking_detail", kwargs={"pk": self.pk})
 
+def booking_post_save(sender, instance, created, *args, **kwargs):
+    if created:
+        number_of_rooms = instance.booking_roomnumber
+        for i in range(0,number_of_rooms-1):
+            Booking.objects.create(
+                booking_roomtype=instance.booking_roomtype,
+                booking_client = instance.booking_client,
+                booking_from = instance.booking_from,
+                booking_to = instance.booking_to,
+                booking_roomnumber = 1
+            )
+post_save.connect(booking_post_save, sender=Booking)
 
 class CheckIn(models.Model):
 
@@ -59,7 +71,7 @@ class CheckIn(models.Model):
     checkin_time = models.DateTimeField(_("Check-in At"), default=timezone.now)
     checkin_type = models.CharField(_("Check-in Type"), max_length=4, choices=CHECKIN_KIND_CHOICES, default='re')
     early_checkin = models.BooleanField(_("Early Check-in"), default=False)
-    rooms = models.ManyToManyField(Room, verbose_name=_("Rooms"))
+    room = models.OneToOneField(Room, verbose_name=_("Rooms"), on_delete=models.CASCADE, null=True)
 
     class Meta:
         verbose_name = _("Check In")
@@ -76,10 +88,17 @@ class CheckIn(models.Model):
         return str(self.checkin_booking.booking_number)
 
 
-def rooms_changed(sender, pk_set, **kwargs):
-    for i in pk_set:
-        room = Room.objects.get(pk=i)
-        room.is_occupied = True
-        room.save()
+# def rooms_changed(sender, pk_set, **kwargs):
+#     for i in pk_set:
+#         room = Room.objects.get(pk=i)
+#         room.is_occupied = True
+#         room.save()
 
-m2m_changed.connect(rooms_changed, sender=CheckIn.rooms.through)
+# m2m_changed.connect(rooms_changed, sender=CheckIn.rooms.through)
+
+def checkin_post_save(sender, instance, created, *args, **kwargs):
+    if created:
+        instance.room.is_occupied = True
+        instance.room.save()
+
+post_save.connect(checkin_post_save, sender=CheckIn)

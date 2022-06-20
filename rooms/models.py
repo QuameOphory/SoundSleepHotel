@@ -6,7 +6,7 @@ from numberGenerator import generateRoomNumber
 # Create your models here.
 
 class RoomType(models.Model):
-    roomtype_code = models.CharField(_("Room Type Code"), max_length=5)
+    roomtype_code = models.CharField(_("Room Type Code"), max_length=5, unique=True)
     roomtype_name = models.CharField(_("Room Type Name"), max_length=50)
     roomtype_number = models.PositiveIntegerField(_("Total Number of Rooms"))
     roomtype_rate = models.DecimalField(_("Rate"), max_digits=5, decimal_places=2)
@@ -25,7 +25,7 @@ class RoomType(models.Model):
         return self.roomtype_name
 
     def get_absolute_url(self):
-        return reverse("RoomType_detail", kwargs={"pk": self.pk})
+        return reverse("roomtype_detail", kwargs={"pk": self.pk})
 
 
 class Room(models.Model):
@@ -35,7 +35,7 @@ class Room(models.Model):
         ('dv', 'Dirty Vacant'),
         ('do', 'Dirty Occupied'),
     ]
-    room_number = models.CharField(_("Room Number"), max_length=50)
+    room_number = models.CharField(_("Room Number"), max_length=50, default=_('-'))
     room_type = models.ForeignKey(RoomType, verbose_name=_("Room Type"), on_delete=models.CASCADE, limit_choices_to={'is_active': True})
     room_status = models.CharField(_("Status of Room"), max_length=50, choices=STATUS_CHOICES, default='dv')
     room_dimension = models.DecimalField(_("Room Area"), max_digits=5, decimal_places=2)
