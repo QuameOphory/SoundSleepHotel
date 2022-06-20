@@ -1,1 +1,28 @@
 {% extends 'extras/base.html' %}
+
+{% block content %}
+<table class="table">
+    <thead class="table-dark">
+        <tr>
+            <td>Room Number</td>
+            <td>Room Type</td>
+            <td>Number of Beds</td>
+            <td>Number of Baths</td>
+            <td>Area of Room</td>
+            <td></td>
+        </tr>
+    </thead>
+    <tbody>
+        {% for room in rooms %}
+            <tr>
+                <td>{{ room.room_number }}</td>
+                <td>{{ room.room_type }}</td>
+                <td>{{ room.room_totalbeds }}</td>
+                <td>{{ room.room_totalbaths }}</td>
+                <td>{{ room.room_dimension }}</td>
+                <td><a href="{% url 'room_update' room.id %}"><i class="bi bi-pencil"></i></a> <i class="bi bi-trash"></i></td>
+            </tr>
+        {% endfor %}
+    </tbody>
+  </table>
+{% endblock content %}

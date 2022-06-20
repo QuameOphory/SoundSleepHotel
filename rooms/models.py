@@ -35,7 +35,7 @@ class Room(models.Model):
         ('dv', 'Dirty Vacant'),
         ('do', 'Dirty Occupied'),
     ]
-    room_number = models.CharField(_("Room Number"), max_length=50, editable=False)
+    room_number = models.CharField(_("Room Number"), max_length=50)
     room_type = models.ForeignKey(RoomType, verbose_name=_("Room Type"), on_delete=models.CASCADE, limit_choices_to={'is_active': True})
     room_status = models.CharField(_("Status of Room"), max_length=50, choices=STATUS_CHOICES, default='dv')
     room_dimension = models.DecimalField(_("Room Area"), max_digits=5, decimal_places=2)
@@ -56,7 +56,7 @@ class Room(models.Model):
         return self.room_number
 
     def get_absolute_url(self):
-        return reverse("Room_detail", kwargs={"pk": self.pk})
+        return reverse("room_detail", kwargs={"pk": self.pk})
 
 def room_pre_save(sender, instance, *args, **kwargs):
     if instance.id is None:
