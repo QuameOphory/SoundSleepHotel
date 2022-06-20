@@ -12,7 +12,7 @@ import field_validations
 
 def generateBookingNumber():
     qs = Booking.objects.order_by('-created_at')
-    booking_number = numberGenerator.generateClientNumber(prefix='B', qs=qs)
+    booking_number = numberGenerator.generateBookingNumber(qs=qs)
     return booking_number
 
 class Booking(models.Model):
