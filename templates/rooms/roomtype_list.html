@@ -1,0 +1,27 @@
+{% extends 'extras/base.html' %}
+
+
+{% block content %}
+<table class="table">
+    <thead class="table-dark">
+        <tr>
+            <td>Code</td>
+            <td>Type Name</td>
+            <td>Number of Rooms</td>
+            <td>Rate</td>
+            <td></td>
+        </tr>
+    </thead>
+    <tbody>
+        {% for roomtype in roomtypes %}
+            <tr>
+                <td>{{ roomtype.roomtype_code }}</td>
+                <td>{{ roomtype.roomtype_name }}</td>
+                <td>{{ roomtype.roomtype_number }}</td>
+                <td>{{ roomtype.roomtype_rate }}</td>
+                <td><a href="{% url 'roomtype_update' roomtype.id %}"><i class="bi bi-pencil"></i></a> <a href="{% url 'roomtype_delete' roomtype.id %}"><i class="bi bi-trash"></i></a></td>
+            </tr>
+        {% endfor %}
+    </tbody>
+  </table>
+{% endblock content %}
