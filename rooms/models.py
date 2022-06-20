@@ -17,8 +17,8 @@ class RoomType(models.Model):
     
 
     class Meta:
-        verbose_name = _("RoomType")
-        verbose_name_plural = _("RoomTypes")
+        verbose_name = _("Room Type")
+        verbose_name_plural = _("Room Types")
         ordering = ['is_active', 'roomtype_rate']
 
     def __str__(self):
@@ -35,13 +35,14 @@ class Room(models.Model):
         ('dv', 'Dirty Vacant'),
         ('do', 'Dirty Occupied'),
     ]
-    room_number = models.CharField(_("Room Number"), max_length=50)
-    room_type = models.ForeignKey(RoomType, verbose_name=_("Room Type"), on_delete=models.CASCADE)
+    room_number = models.CharField(_("Room Number"), max_length=50, editable=False)
+    room_type = models.ForeignKey(RoomType, verbose_name=_("Room Type"), on_delete=models.CASCADE, limit_choices_to={'is_active': True})
     room_status = models.CharField(_("Status of Room"), max_length=50, choices=STATUS_CHOICES, default='dv')
     room_dimension = models.DecimalField(_("Room Area"), max_digits=5, decimal_places=2)
     room_totalbeds = models.PositiveIntegerField(_("Number of Beds"), default=1)
     room_totalbaths = models.PositiveIntegerField(_("Number of Baths"), default=1)
-    is_active = models.BooleanField(_("Is Active"), default=True)
+    is_active = models.BooleanField(_("Is Active"), default=True) #if room is usable
+    is_occupied = models.BooleanField(_("Is Occupied"), default=False)
     created_at = models.DateTimeField(_("Created At"), auto_now_add=True)
     updated_at = models.DateTimeField(_("Updated At"), auto_now=True)
     
@@ -49,6 +50,7 @@ class Room(models.Model):
     class Meta:
         verbose_name = _("Room")
         verbose_name_plural = _("Rooms")
+        ordering = ['room_number']
 
     def __str__(self):
         return self.room_number
@@ -59,5 +61,7 @@ class Room(models.Model):
 def room_pre_save(sender, instance, *args, **kwargs):
     if instance.id is None:
         prefix = instance.room_type.roomtype_code
-        qs = Room.objects.filter(room_type=instance.room_type).order_by('-created-at')
-        instance.room_number = generateRoomNumber(qs, prefix)
+        qs = Room.objects.filter(room_type=instance.room_type).order_by('-created_at')
+        instance.room_number = generateRoomNumber(qs=qs, prefix=prefix)
+
+pre_save.connect(room_pre_save, sender=Room)
