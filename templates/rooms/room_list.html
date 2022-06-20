@@ -20,7 +20,7 @@
                 <td>{{ room.room_totalbeds }}</td>
                 <td>{{ room.room_totalbaths }}</td>
                 <td>{{ room.room_dimension }}</td>
-                <td><a href="{% url 'room_update' room.id %}"><i class="bi bi-pencil"></i></a> <i class="bi bi-trash"></i></td>
+                <td><a href="{% url 'room_update' room.id %}"><i class="bi bi-pencil"></i></a> <a href="{% url 'room_delete' room.id %}"><i class="bi bi-trash"></i></a></td>
             </tr>
         {% endfor %}
     </tbody>

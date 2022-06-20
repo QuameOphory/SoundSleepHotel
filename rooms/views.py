@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.views import generic
 from .forms import RoomCreationForm, RoomUpdateForm
 from .models import Room, RoomType
@@ -39,6 +39,12 @@ class RoomDetailView(generic.DetailView):
     context_object_name = 'room'
     model = Room
     template_name = 'rooms/room_detail.html'
+
+
+class RoomDeleteView(generic.DeleteView):
+    model = Room
+    context_object_name = 'room'
+    success_url = reverse_lazy('room_all')
 
 
 class RoomTypeListView(generic.ListView):
