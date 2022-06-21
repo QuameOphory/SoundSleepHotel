@@ -1,3 +1,4 @@
+from django.db.models import Count
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
 from django.views import generic
@@ -21,6 +22,26 @@ class OccupiedRoomListView(generic.ListView):
     queryset = Room.objects.filter(is_occupied=True)
     context_object_name = 'rooms'
     template_name = 'rooms/room_list.html'
+
+
+def occupiedRoomCountByType(request):
+    qs = Room.objects.filter(is_occupied=True).values('room_type').annotate(Total=Count('id'))
+    roomtypes = RoomType.objects.all()
+    context = {
+        'typecount': qs,
+        'roomtypes': roomtypes
+    }
+    return render(request, 'rooms/occupiedcount.html', context)
+
+
+class RoomByTypeListView(generic.ListView):
+    context_object_name = 'rooms'
+    template_name = 'rooms/room_list.html'
+
+    def get_queryset(self):
+        return super().get_queryset()
+    
+
 
 
 class RoomCreateView(generic.CreateView):
@@ -62,7 +83,7 @@ class AllRoomTypeListView(generic.ListView):
 class RoomTypeDeleteView(generic.DeleteView):
     model = RoomType
     context_object_name = 'roomtype'
-    success_url = reverse_lazy('roomtype_list5/')
+    success_url = reverse_lazy('roomtype_list')
     
 
 class RoomTypeDetailView(generic.DetailView):

@@ -15,4 +15,5 @@ urlpatterns = [
     path('types/<int:pk>/delete/', RoomTypeDeleteView.as_view(), name='roomtype_delete'),
     path('types/<int:pk>/update/', RoomTypeUpdateView.as_view(), name='roomtype_update'),
     path('types/<int:pk>/', RoomTypeDetailView.as_view(), name='roomtype_detail'),
+    path('viewtype/<int:pk>/', RoomByTypeListView.as_view(), name='room_type'),
 ]
