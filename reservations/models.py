@@ -7,6 +7,7 @@ from django.utils.translation import gettext_lazy as _
 from clients.models import Client, ClientFunding
 from rooms.models import RoomType, Room
 import field_validations
+from datetime import timedelta
 
 # Create your models here.
 
@@ -26,8 +27,8 @@ class Booking(models.Model):
 
     booking_number = models.CharField(_("Booking Number"), max_length=50, default=generateBookingNumber)
     booking_client = models.ForeignKey(Client, verbose_name=_("Booking By"), on_delete=models.CASCADE)
-    booking_from = models.DateTimeField(_("Booking From"), validators=[field_validations.validate_bookingfrom], default=timezone.now)
-    booking_to = models.DateTimeField(_("Booking To"),)
+    booking_from = models.DateField(_("Booking From"), default=timezone.now)
+    booking_to = models.DateField(_("Booking To"),)
     booking_roomtype = models.ForeignKey(RoomType, verbose_name=_("Room Type"), on_delete=models.CASCADE)
     booking_roomnumber = models.PositiveIntegerField(_("Number of Rooms"), default=1)
     is_active = models.BooleanField(_("Active"), default=True)

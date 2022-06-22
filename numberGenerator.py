@@ -41,9 +41,6 @@ def generateBookingNumber(qs, prefix='B', postfix='1'):
     else:
         firstrecord = qs.first()
         bookingnumber, new_bookingnumber = firstrecord.booking_number[7:], str(int(firstrecord.booking_number[7:]) + 1)
-        # lenofnewnumber = len(new_clientnumber)
-        # diff = len(clientnumber) - lenofnewnumber
-        # postfix = new_clientnumber.zfill(lenofnewnumber + diff)
         postfix = new_bookingnumber.zfill(len(bookingnumber))
         numberstring = prefix + datepart + postfix
         return numberstring
