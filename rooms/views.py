@@ -53,7 +53,7 @@ class RoomCreateView(generic.CreateView):
 class RoomUpdateView(generic.UpdateView):
     form_class = RoomUpdateForm
     model = Room
-    template_name = 'rooms/room_create.html'
+    template_name = 'rooms/room_update.html'
 
 
 class RoomDetailView(generic.DetailView):
