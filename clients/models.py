@@ -20,7 +20,7 @@ class Client(models.Model):
     ]
     client_number = models.CharField(_("Client Number"), max_length=50, default=clientNumberGenerator)
     first_name = models.CharField(_("First Name"), max_length=50)
-    middle_name = models.CharField(_("Middle Name"), default=' ', max_length=50)
+    middle_name = models.CharField(_("Middle Name"), default='-', max_length=50)
     last_name = models.CharField(_("Last Name"), max_length=50)
     gender = models.CharField(_("Gender"), max_length=1, choices=GENDER_CHOICES)
     age = models.PositiveIntegerField(_("Age"), blank=True, null=True)
